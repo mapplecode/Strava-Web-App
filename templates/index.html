@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strava Integration Landing Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        h1 {
+            color: #fc4c02;
+        }
+       .btn-primary {
+            background-color: #fc4c02;
+            border-color: #fc4c02;
+        }
+       .btn-primary:hover {
+            background-color: #e63c00;
+            border-color: #e63c00;
+        }
+       .btn-secondary {
+            background-color: #343a40;
+            border-color: #343a40;
+        }
+       .btn-secondary:hover {
+            background-color: #292d31;
+            border-color: #292d31;
+        }
+        .feature-list {
+            color: #ffffff;
+        }
+       .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Strava Data App</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Free Features</h2>
+            <div class="feature-list">
+                <input type="checkbox" id="activity_type" name="activity_type" checked disabled>
+                <label for="activity_type">Total activity type, Distance year to date</label><br>
+                <input type="checkbox" id="average_distance" name="average_distance" checked disabled>
+                <label for="average_distance">Average activity type distance previous 4 calendar weeks</label><br>
+            </div>
+            <a href="https://www.strava.com/dashboard" class="btn btn-primary">Click To Continue To Strava</a>
+        </div>
+        <div class="col-md-6">
+            <h2>Paid Features ($10/month)</h2>
+            <div class="feature-list">
+                <input type="checkbox" id="average_pace" name="average_pace">
+                <label for="average_pace">Average pace of runs for this calendar year</label><br>
+                <input type="checkbox" id="total_elevation" name="total_elevation">
+                <label for="total_elevation">Total elevation for calendar year</label><br>
+                <input type="checkbox" id="average_elevation" name="average_elevation">
+                <label for="average_elevation">Average elevation the user has run in the previous 4 calendar weeks</label><br>
+            </div>
+            <a href="/paid_features" class="btn btn-primary">Learn More</a>
+            <a href="#" class="btn btn-secondary">Checkout securely with Stripe</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

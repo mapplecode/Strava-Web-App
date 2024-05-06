@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Version</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        h1 {
+            color: #fc4c02;
+        }
+        h2 {
+            color: #fc4c02;
+        }
+        h3 {
+            color: #ffffff;
+        }
+        ul {
+            list-style-type: disc;
+            color: #ffffff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ffffff;
+            text-align: left;
+        }
+        th {
+            background-color: #fc4c02;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>This is the page for free version users.</h1>
+    <h3> Here in the free version of the app, you wil get the following features to your activities</h3>
+    <ul>
+        <li>Total activity type, Distance year to date</li>
+        <li>Average activity type distance previous 4 calendar weeks</li>
+    </ul>
+    <h2>Activities</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Start Date</th>
+            <th>Distance</th>
+        </tr>
+        {% for activity in activities %}
+            <tr>
+                <td>{{ activity.id }}</td>
+                <td>{{ activity.name }}</td>
+                <td>{{ activity.type }}</td>
+                <td>{{ activity.start_date }}</td>
+                <td>{{ activity.distance }}</td>
+            </tr>
+        {% endfor %}
+    </table><br>
+    <a href="/paid_features" class="btn btn-primary"> Click here to explore Paid features </a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
