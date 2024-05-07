@@ -1,7 +1,8 @@
 # A very simple Flask Hello World app for you to get started with...
-import requests, csv
+import requests, csv, configparser
 from flask import Flask, request, jsonify, render_template, redirect, session
 from datetime import datetime, timedelta
+
 
 app = Flask(__name__)
 
@@ -12,9 +13,12 @@ def save_tokens_to_file(access_token, refresh_token):
         file.write(f"Access Token: {access_token}\n")
         file.write(f"Refresh Token: {refresh_token}\n")
 # Replace these values with your Strava application's client_id and client_secret
-client_id = '124236'
-client_secret = 'f91f74dcbc3defbe8b32e7df3b98dad0f752e8d8'
+config = configparser.ConfigParser()
+config.read('config.ini')
 
+# Access the values from the config.ini file
+client_id = config['Strava']['client_id']
+client_secret = config['Strava']['client_secret']
 
 def get_tokens_from_file():
     with open('/home/equinoxagents/mysite/tokens.txt', 'r') as file:
