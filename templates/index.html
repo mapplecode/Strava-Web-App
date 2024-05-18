@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strava Integration Landing Page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* Custom styles */
         body {
@@ -14,26 +15,26 @@
         h1 {
             color: #fc4c02;
         }
-       .btn-primary {
+        .btn-primary {
             background-color: #fc4c02;
             border-color: #fc4c02;
         }
-       .btn-primary:hover {
+        .btn-primary:hover {
             background-color: #e63c00;
             border-color: #e63c00;
         }
-       .btn-secondary {
+        .btn-secondary {
             background-color: #343a40;
             border-color: #343a40;
         }
-       .btn-secondary:hover {
+        .btn-secondary:hover {
             background-color: #292d31;
             border-color: #292d31;
         }
         .feature-list {
             color: #ffffff;
         }
-       .container {
+        .container {
             max-width: 800px;
             margin: 40px auto;
             padding: 20px;
@@ -41,19 +42,25 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
+        .top-right-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <a href="/deauthorize" class="btn btn-primary top-right-button">Disconnect from Strava</a>
     <h1>Strava Data App</h1>
     <div class="row">
         <div class="col-md-6">
             <h2>Free Features</h2>
             <div class="feature-list">
-                <input type="checkbox" id="activity_type" name="activity_type" checked disabled>
+                <input type="checkbox" id="activity_type" name="activity_type">
                 <label for="activity_type">Total activity type, Distance year to date</label><br>
-                <input type="checkbox" id="average_distance" name="average_distance" checked disabled>
+                <input type="checkbox" id="average_distance" name="average_distance">
                 <label for="average_distance">Average activity type distance previous 4 calendar weeks</label><br>
             </div>
             <a href="https://www.strava.com/dashboard" class="btn btn-primary">Click To Continue To Strava</a>
@@ -74,8 +81,47 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        function sendCheckboxStates() {
+            try {
+                var activityTypeChecked = $('#activity_type').is(':checked');
+                var averageDistanceChecked = $('#average_distance').is(':checked');
+
+                console.log('Sending checkbox states:', {
+                    activity_type_checked: activityTypeChecked,
+                    average_distance_checked: averageDistanceChecked
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/save_checkbox_states',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        activity_type_checked: activityTypeChecked,
+                        average_distance_checked: averageDistanceChecked
+                    }),
+                    success: function(response) {
+                        console.log('Checkbox states saved successfully');
+                    },
+                    error: function(error) {
+                        alert('Error saving checkbox states:', error);
+                    }
+                });
+            } catch (e) {
+                console.error('Error in sendCheckboxStates:', e);
+            }
+        }
+
+        // Attach change event listeners to checkboxes
+        $('#activity_type, #average_distance').change(sendCheckboxStates);
+
+        // Send initial states on page load
+        sendCheckboxStates();
+    });
+</script>
 </body>
 </html>
