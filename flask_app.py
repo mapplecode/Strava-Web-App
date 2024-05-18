@@ -9,8 +9,8 @@ app = Flask(__name__)
 app.secret_key = 'Strava'
 
 # Replace these values with your Strava application's client_id and client_secret
-client_id = '124236'
-client_secret = 'f91f74dcbc3defbe8b32e7df3b98dad0f752e8d8'
+client_id = ''
+client_secret = ''
 
 # Function to get CSV file path based on athlete ID
 def get_csv_path(athlete_id):
