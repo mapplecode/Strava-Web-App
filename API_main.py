@@ -5,27 +5,19 @@ import requests
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
-
 app.secret_key = 'Strava'
-
-# Replace these values with your Strava application's client_id and client_secret
 client_id = '124236'
 client_secret = 'f91f74dcbc3defbe8b32e7df3b98dad0f752e8d8'
 
 # Function to get CSV file path based on athlete ID
 def get_csv_path(athlete_id):
     return f"/home/equinoxagents/mysite/{athlete_id}_activities.csv"
-
-# Function to save activities to CSV file
+    
 def save_activities_to_csv(athlete_id, activities):
     csv_file = get_csv_path(athlete_id)
     existing_activities = get_activities_from_csv(athlete_id)
-
-    # Filter out activities that already exist in the CSV file
     new_activities = [activity for activity in activities if activity not in existing_activities]
-    # Print the new activities before saving them
     print("New activities to be added to CSV:", new_activities)
-    # Write activities to the CSV file
     with open(csv_file, 'a', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=['type', 'distance', 'start_date'])
         if os.stat(csv_file).st_size == 0:  # Check if file is empty
@@ -33,9 +25,6 @@ def save_activities_to_csv(athlete_id, activities):
         for activity in new_activities:
             writer.writerow(activity)
 
-
-
-# Function to get activities from CSV file
 def get_activities_from_csv(athlete_id):
     csv_file = get_csv_path(athlete_id)
     activities = []
@@ -107,15 +96,11 @@ def get_activities(access_token):
         'Accept': 'application/json',
         'Authorization': f'Bearer {access_token}'
     }
-
-    # Uncomment the pagination code if needed
     page = 1
-    per_page = 30  # Adjust per_page as needed
+    per_page = 30
 
     current_date = datetime.now()
     year_start = datetime(current_date.year, 1, 1)
-
-    # Fetch activities of the current year with pagination
     while True:
         params = {'page': page, 'per_page': per_page}
         response = requests.get(url, headers=headers, params=params)
@@ -127,7 +112,6 @@ def get_activities(access_token):
             for activity in activities:
                 start_date = datetime.strptime(activity['start_date'], "%Y-%m-%dT%H:%M:%SZ")
                 if start_date >= year_start:
-                    # Filter only relevant fields
                     relevant_fields = {
                         'type': activity['type'],
                         'distance': activity['distance'],
@@ -135,18 +119,13 @@ def get_activities(access_token):
                     }
                     all_activities.append(relevant_fields)
                 else:
-                    # Since activities are ordered by date, once we encounter an activity
-                    # before the start of the current year, we can stop fetching.
                     break
             page += 1
         else:
             print("Failed to fetch activities:", response.text)
             break
-
     return all_activities
 
-
-# Function to get distances by activity type and calculate last 4 weeks average
 def get_distances_by_type_from_csv(athlete_id):
     activities = get_activities_from_csv(athlete_id)
     distances_by_type = {}
@@ -160,24 +139,17 @@ def get_distances_by_type_from_csv(athlete_id):
         distance = float(activity['distance'])
         start_date = datetime.strptime(activity['start_date'], "%Y-%m-%dT%H:%M:%SZ")
         current_date = datetime.now()
-
-        # Calculate year-to-date (YTD) distance
         if activity_type in distances_by_type:
             distances_by_type[activity_type]['ytd'] += distance
         else:
             distances_by_type[activity_type] = {'ytd': distance, 'last_4_weeks': 0}
-
-        # Calculate distance for the past 4 weeks
         if start_date >= (current_date - timedelta(weeks=4)):
             distances_by_type[activity_type]['last_4_weeks'] += distance
-
-    # Calculate last 4 weeks average distance
     for activity_type, distances in distances_by_type.items():
         last_4_weeks_avg_by_type[activity_type] = distances['last_4_weeks'] / 4 if distances['last_4_weeks'] != 0 else 0
 
     return distances_by_type, last_4_weeks_avg_by_type
 
-# Function to update description
 def get_distances_by_type_from_csv(athlete_id):
     activities = get_activities_from_csv(athlete_id)
     distances_by_type = {}
@@ -191,27 +163,19 @@ def get_distances_by_type_from_csv(athlete_id):
         distance = float(activity['distance'])
         start_date = datetime.strptime(activity['start_date'], "%Y-%m-%dT%H:%M:%SZ")
         current_date = datetime.now()
-
-        # Calculate year-to-date (YTD) distance
         if activity_type in distances_by_type:
             distances_by_type[activity_type]['ytd'] += distance
         else:
             distances_by_type[activity_type] = {'ytd': distance, 'last_4_weeks': 0}
-
-        # Calculate distance for the past 4 weeks
         if start_date >= (current_date - timedelta(weeks=4)):
             distances_by_type[activity_type]['last_4_weeks'] += distance
-
-    # Calculate last 4 weeks average distance
     for activity_type, distances in distances_by_type.items():
         last_4_weeks_avg_by_type[activity_type] = distances['last_4_weeks'] / 4 if distances['last_4_weeks'] != 0 else 0
 
     return distances_by_type, last_4_weeks_avg_by_type
 
-# Function to update description
 def update_description(activity_id, athlete_id, activities):
     new_activity = []
-    # Recalculate distances by type and last 4 weeks averages
     distances_by_type, last_4_weeks_avg_by_type = get_distances_by_type_from_csv(athlete_id)
 
     url = f"https://www.strava.com/api/v3/activities/{activity_id}"
@@ -235,8 +199,6 @@ def update_description(activity_id, athlete_id, activities):
         new_activity.append(relevant_fields)
         print("---------------------------------------------------------------------------------", new_activity)
         save_activities_to_csv(athlete_id, new_activity)
-
-        # Check if description exists
         if 'description' not in activity_data or not activity_data['description']:
             activity_type = activity_data.get('type')
             if activity_type:
@@ -251,8 +213,6 @@ def update_description(activity_id, athlete_id, activities):
                     description += "Try for free at https://racestats.com/"
 
                     payload = {'description': description}
-
-                    # Update description
                     response = requests.put(url, headers=headers, data=payload)
                     print(response.text)
                 else:
@@ -264,7 +224,6 @@ def update_description(activity_id, athlete_id, activities):
     except Exception as e:
         print("Exception occurred in update function:", e)
 
-# Function to handle webhook events
 @app.route('/webhook', methods=['POST'])
 def handle_strava_webhook():
     event_data = request.json
@@ -279,15 +238,12 @@ def handle_strava_webhook():
             'Accept': 'application/json',
             'Authorization': f'Bearer {access_token}'
         }
-
-        # Get activity details
         response = requests.get(url, headers=headers)
         activity_data = response.json()
         print("Received activity update for activity ID:", activity_data)
         activities = get_activities_from_csv(athlete_id)
         print("+++++++++++++++++++++++++++++", activities)
         try:
-            # Filter out activities without 'type' key
             activities_with_type = [activity for activity in activities if 'type' in activity]
             update_description(activity_id, athlete_id, activities_with_type)
         except Exception as e:
@@ -298,7 +254,5 @@ def handle_strava_webhook():
         print("Webhook event does not contain required data")
         return jsonify({"status": "success"}), 200
 
-
-# Run the app
 if __name__ == '__main__':
     app.run(port=3000)
